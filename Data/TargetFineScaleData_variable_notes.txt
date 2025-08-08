@@ -1,0 +1,17 @@
+Year
+Block 
+Plot
+Subplot
+VisObs_Av : Number of 10cm segmentsw/25% cover - Robel Pole
+AllYieldEstEst_lbsAc : Rated 1-5 within plots and compared to regression of dry mass of samples in same area same time same rating scale
+Thatch_lbsAc : estmates from 3x 10cm plots
+AvVegHeight_cm: Average height in cm of tallest vegetation in 15 cm radius collected every 40cm
+AvThatch_cm :Average depth of thatch (dead, detached biomass on soil surface) collected every 40 cm
+BG_pct : percent of sampled points (sum/60) with no plants recorded
+MustardCovr_pct : percent canopy cover of non-native mustard target weed
+MustardDens_m2 : average density of non-native target weed mustard
+PoppyDens_m2 : average density of native seeded California poppy
+YStarDens_m2 : average density of non-native target weed yellow starthistle
+GoldfieldDens_m2 : average density of native seeded Southern goldfields
+OwlsClvDens_m2 : average density of native seeded purple owls clover
+TarweedDens_m2 : average density of native seeded three-ray tarweed

@@ -1,0 +1,260 @@
+2024-10-08
+
+1. (*) does mean dead. We also only use it for things that died the year before, 
+not recently dead growth from that year (which can be distinguished by color: 
+tan instead of grey usually). 
+If to cumbersome, those can either be removed or aggregated into dead veg. 
+Can you do that easily, or would you like me to do that?
+
+2. For plant community we really are interested in 
+A. all (common) species. 
+B. But there are two target weeds we are trying to control 
+summer mustard, Hirschfeldia incana, HIIN, and 
+yellow star thistle, Centuarea solstitialis, CESO. 
+
+We also seeded some native wildfowers: poppies, ESCA; tarweed, DELO; 
+owls clover, CAEX; and goldfields, LAGR
+
+3. I do have a key for the species. Native grass, native forb, non-native grass, 
+non-native forb are the most important functional groups, 
+though you could add annual/perennial in. I do have a list (attached)
+
+4. Often in NMS less common species are removed. 
+In the past I have removed species not present in a minimum number of plots (like 3, 5, or7) 
+and sometimes not hitting enough cover. 
+If it was only in 1 or 2 plots with 1 percent cover it isn’t going to tell us anything.
+
+5. Probably 6 months Oct-March rainfall. I couldn’t easily grab good data 
+for that period from our data station, but I could with a little digging.
+
+6. In the first position: 
+G=full grazing,
+S= no grazing in winter, spring only (aka seasonal), 
+U= not grazed. 
+In the second position: 
+C=control, 
+S= seeded, 
+M=mowed (in the ungrazed plots, only), 
+MS= mowed and seeded (in the ungrazed plots, only). 
+Sorry about the confusing double meaning for “S”
+
+
+##Data description:
+Our 4 years of plant community data are in a file in our google drive folder:
+
+I created an excel file that has tabes with our plant community data and with our soil data. 
+We only sampled our soil data one year and we only sampled by plot (G,S,U) not subplot. 
+I created another file that is just for one year (rather than copied to have the same data for each year).
+
+ XLXS:
+Plant Comm and Soil
+CSV versions of:
+Plant Comm (Wide 2)
+Soil 2023
+
+If possible, could you run an NMS on the plant community by treatment and year? 
+Does it make any sense to run it with the soil as factors as well? Water Capacity (mid range value), 
+Organic Matter, CN ratio might be good things to include. I didn’t bother to add rainfall since 
+it is the same across the site for each year, but perhaps I could add that (though I also couldn’t 
+find a total for PINN in a quick search since they only update totals online every couple years).
+
+ 
+
+Take a look at the data if you have a moment and give me feedback on if there is some further work you would like me 
+to do to put it into a format for easy analysis.
+
+
+2024-11-24
+Next steps:
+1. Amelia sent new lookup table
+2. join lookup table to the wide ord data
+3. Group the species by native and Non-native annuals
+  = group byt the FxlGrps from Amelia
+  = Lump and separate the 4 seeded natives vs all other Native annual forbs (NAF)
+  = HIIN and CESO separate as well lump or split 
+  
+  
+4. Only UNGRAZED has the subtreatments.  
+  a. Do interactions for trt and subtrt.
+  
+  
+4. Main interest is mowing as a 4th treatment to consider (not really a subtreatmnet).
+
+  
+2024-11-25
+1. look into more NMS dimensions.
+2. Look into incorporating pre treatment year 2021.
+3. TODO: Take a look at the summer mustard analysis same plots but different time of year.
+  A. canopy cover response
+  B. effect of year, treatment and subtreatment on cover.
+4. 
+
+
+
+2025-03-10
+Devii, Leslie Roche, Amelia, Elizabeth Reikowski (Rancher)
+1. include baseline year.
+2. set ungrazed to baseline
+
+-
+
+2025-03-17
+
+1. Remove all mowed and mowed seeded (done, also do for GLLVM)
+2. add in rainfall that Amelia Sent (water Year?)
+  a. Spring total Feb-March  rainfall?  (sampling in April)
+  b. or use SPEI to include evapotranspiration?
+      source for SPEI?  (Leslie will ask for source,  also R package source)
+3. Amelia's Chorizanthe analysis - followed rainfall for 3 month time chunks.
+    November and April key months in previous studies
+4. rerun the GLLVM with the filter in 1 above
+5. Redo the mustard data in the same framework
+            Is there no Pre data for mustard?
+
+
+2025-03-26
+1. Review above
+2. What about soil?
+
+
+1. what is the analysis question for the mustard data?
+2. what are the response variables:
+  multivariate analysis
+  
+3. Analysis questions
+  A. mustard cover
+  B. thatch
+  C. Visual obstruction (revelle) (also wildlife related)
+  D. Veg height (just for validation, and perhaps seeding impact?)
+    i. or heterogeneity?  Habitat structure for birds...look up methods.
+    ii. CV of height?
+    iii. functional height diversity. shannon index modified for height by classes from visual obstruction data.
+
+
+COMMUNITY DATA SET (pct cover all species)
+TARGET (finer) Scale Data SET (details on target)
+
+
+4. Stated goals (note updates 2025-04-28):
+  A. Does grazing reduce thatch and create more bare ground?  ()                           COMM RESULTS -->   (2b_GLLVM.R)
+  B. Does Grazing reduce summer mustard? (Cover here) (Density data pending from AR)       COMM RESULTS -->   (2b_GLLVM.R)
+  C. Does grazing enhance seeding success?  (cover here, pending density data, from AR)    COMM RESULTS -->   (2b_GLLVM.R)
+  D. Does Grazing enhance habitat for grassland birds and ground squirrels?  (Amelia has the data)
+    This is from different sampling method to get more accuracy/finer scale sampling !
+    i. visual obstruction and/or (Revelle data pending from Amelia)
+            TARGET (FINE SCALE) DATA SET
+            sum mustard cover
+            veg height
+            visual obstruction average
+            thatch 
+            bare ground
+            density of target species (2 weeds and 4 seeds)
+    ii. height diversity (skip for now)
+  E. How do treatments impact community composition?                              COMM RESULTS -->   (2a_ordination.R)
+  
+5. continue to set mowing data aside
+6. Visualization
+  A. Spider plots example: 
+    https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0166595
+
+7. Plot out the soil type info.
+
+NMS in good format - clean up
+
+
+2025-04-30
+1. clean up NMS, GLLVM and GLMERs
+2. confirm target data with amela
+3. fix the naming convetions for groupings!
+    seed, mow,
+4. add in 2025 Visual obstruction
+5. analyze production data.  do both types and compare. focus on the AllYield !!
+6. 
+codes for species groups:
+The three leeter codes are a concatenation of 3 columns "native?", "duration ", "lifeform" . 
+Native?: yes=native,  n= non native, x= not applicable.; 
+duration: A=annual,  P= perennial, x= not applicable; 
+life form: f= forb ( wildflower), g= gramminoid ( grass), x= not applicable
+
+
+
+2025-07-10:
+Hi Ben,
+Here is the validated plant community data from the Pinnacles Bottomlands, 2025, 
+and an updated precip table.  I have updated the file called targetfinescaldata 
+with all the other different measurements to date, but we are awaiting this years 
+Mustard cover, which we will collect shortly and will be very quick to enter.
+I can send the file to you if you want to look at it, 
+but otherwise I will send it a couple days before our next meeting, 
+at which point it should be complete. Here are the headers from that dataset:
+
+
+
+
+-------------------
+2025-07-24
+1. combined 2025 community data into Wide_3 to create wide 4 qaqc.
+there were about 15 additional species colums in the 2025 data, so that was removed...
+    most were all zeros or just 1 hit
+
+2. Don't have enough info to add the 2025 data to the finescaledata.....  
+missing fields and rows...looks like the plot data is the new 80 samples, but measured data
+are for all years with no ID info.    Seems like different parameters measured in the 2021-2024 
+vs 2025 data.
+
+
+
+3. Check with Amelia the native AG -- shouldn't be any but show up in the Wide_6.FxlGrp file...
+    2025-08-04 AMELIA SENDING BB UPDATED qaqc 3 file.
+
+4. remove DEADSUM, XXX, and BAREGROUND from NMS plot and analyses.  just discuss in text.
+
+5. Lag effects of rainfall?
+  a. build into a bayesian model for univariate cover of target species
+  
+6. BB check recent email for the overarching questions...
+a. what are the "wildlife habitat"" metrics:   some bareground, reduced thatch 
+        (grassland birds, tiger salamanders, etc. )
+7. rename "seeded" to "scraped and seeded"
+
+
+2025-08-04
+1. Refer to amelia's notes file for definitions:
+
+TARGET FINE SCALE DATA
+Year
+Block 
+Plot
+Subplot
+VisObs_Av : Number of 10cm segmentsw/25% cover - Robel Pole
+AllYieldEstEst_lbsAc : Rated 1-5 within plots and compared to regression of dry mass of samples in same area same time same rating scale
+Thatch_lbsAc : estmates from 3x 10cm plots
+AvVegHeight_cm: Average height in cm of tallest vegetation in 15 cm radius collected every 40cm
+AvThatch_cm :Average depth of thatch (dead, detached biomass on soil surface) collected every 40 cm
+BG_pct : percent of sampled points (sum/60) with no plants recorded
+MustardCovr_pct : percent canopy cover of non-native mustard target weed
+MustardDens_m2 : average density of non-native target weed mustard
+PoppyDens_m2 : average density of native seeded California poppy
+YStarDens_m2 : average density of non-native target weed yellow starthistle
+GoldfieldDens_m2 : average density of native seeded Southern goldfields
+OwlsClvDens_m2 : average density of native seeded purple owls clover
+TarweedDens_m2 : average density of native seeded three-ray tarweed
+
+2. 
+A. Pool the density measurements?  Pool Mustard and YST? (mustard high density)
+B. Pool the seeded in panels together?  (goldfields order of magnitude higher)
+
+3. AR Hypotheses: 
+A. seeded plants do better in grazed than ungrazed
+B. seasonal grazed intermediate for seeded
+C. Seasonal and regular grazing similar effect on mustard
+D. Grazed treatment less viaual obastruction, lower yeield, less thatch, less veg height, less mustard, less YST, More natives
+E. Grazing beneficial to natives over grazed.
+
+
+2025-08-08
+A. Turns out the native AG is ELTR which is a native rye grass.  
+    few occurrances in 2025 and one eariler year on small set of plots.  drop or keep?
+
+
+

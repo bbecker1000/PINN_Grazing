@@ -1,0 +1,51 @@
+---
+title: "Mustard"
+output: pdf_document
+date: "2024-11-26"
+---
+
+```{r, cache = T, warning=F}
+
+library(tidyverse)
+library(readr)
+library(readxl)
+library(vegan)
+library(ggordiplots)
+library(ggrepel)
+library(cowplot)
+library(lme4)
+library(glmmTMB)
+library(sjPlot)
+library(broom)
+
+#import
+SumMust <- read_excel("Data/SumMust_long.xlsx")
+
+#setup data types
+SumMust$Year.s <- as.factor(SumMust$Year-2021)
+SumMust$Mustard.r <- as.integer(round(SumMust$Mustard))
+SumMust$VegTrt <- as.factor(SumMust$VegTrt)
+SumMust$SubTrt <- as.factor(SumMust$SubTrt)
+
+#plot
+ggplot(SumMust, aes(VegTrt, Mustard, color = SubTrt)) + 
+  geom_boxplot() +
+  geom_point()
+
+#glmm assuming out of 100 points and random effect for block
+m1 <- glmer(cbind(Mustard.r, 100) ~ Year.s * VegTrt * SubTrt + (1|Block),
+            family = binomial,
+            data = SumMust)
+summary(m1)
+# residual plot
+plot(m1)
+plot_model(m1, type = "resid")
+plot_model(m1, type = "diag")
+
+#forest plot
+plot_model(m1) +
+  geom_hline(yintercept = 1, linetype = 2)
+
+#interaction plot
+plot_model(m1, type = "int", terms = c("VegTrt", "SubTrt"))
+```

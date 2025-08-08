@@ -1,0 +1,52 @@
+---
+title: "Average Height"
+output: pdf_document
+date: "2024-12-13"
+---
+
+```{r, cache = T, warning=F}
+
+library(tidyverse)
+library(readr)
+library(readxl)
+library(vegan)
+library(ggordiplots)
+library(ggrepel)
+library(cowplot)
+library(lme4)
+library(glmmTMB)
+library(sjPlot)
+library(broom)
+
+#import
+SumMust_Height <- read_excel("Data/SumMust_PlusVegHeight.xlsx")
+
+#setup data types
+SumMust_Height$Year.s <- as.factor(SumMust_Height$Year-2021)
+SumMust_Height$Mustard.r <- as.integer(round(SumMust_Height$Mustard))
+SumMust_Height$VegTrt <- as.factor(SumMust_Height$VegTrt)
+SumMust_Height$SeedTrt <- as.factor(SumMust_Height$SeedTrt)
+SumMust_Height$AvVegHeight <- as.numeric(SumMust_Height$AvVegHeight)
+
+#plot
+ggplot(SumMust_Height, aes(VegTrt, AvVegHeight, color = SeedTrt)) + 
+  geom_boxplot() +
+  geom_point(aes(alpha = 0.5), position = position_dodge(0.75)) 
+
+#glmm assuming out of 100 points and random effect for block
+m2 <- lmer(AvVegHeight ~ Year.s + VegTrt * SeedTrt + (1|Block),
+            #family = binomial,
+            data = SumMust_Height)
+summary(m2)
+# residual plot
+plot(m2)
+plot_model(m2, type = "resid")
+plot_model(m2, type = "diag")
+
+#forest plot
+plot_model(m2) +
+  geom_hline(yintercept = 0, linetype = 2)
+
+#interaction plot
+plot_model(m2, type = "pred", terms = c("Year.s", "VegTrt", "SeedTrt"))
+```
