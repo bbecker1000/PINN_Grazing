@@ -13,6 +13,7 @@ library(stringr)
 library(ggord)
 Wide_3 <- read_csv("Data/Wide 4_qaqc.csv")
 (Wide_3)
+names(Wide_3)
 
 
 #split out the Substreatment into 2 columns
@@ -91,13 +92,13 @@ unique(SpeciesCode$FxlGrp)  # = 8 groups
 
 SpeciesCode$FxlGrp <- 
   ifelse(SpeciesCode$FxlGrp == "YAF", "Native-AF",
-            ifelse(SpeciesCode$FxlGrp == "YAG", "Native-AG",
+            ifelse(SpeciesCode$FxlGrp == "YPG", "Native-PG",
                   ifelse(SpeciesCode$FxlGrp == "YPF", "Native-PF",
-                       ifelse(SpeciesCode$FxlGrp == "YPG", "Native-PG",
+                 #      ifelse(SpeciesCode$FxlGrp == "YPG", "Native-PG",
                               ifelse(SpeciesCode$FxlGrp == "NAG", "NonNative-AG",
                                      ifelse(SpeciesCode$FxlGrp == "NPF", "NonNative-PF",
                                             ifelse(SpeciesCode$FxlGrp == "NAF", "NonNative-AF",
-                                              SpeciesCode$FxlGrp)))))))
+                                              SpeciesCode$FxlGrp))))))
 
 
 #files for MDS
@@ -180,7 +181,7 @@ colnames(Wide_6.FxlGrp) <- c(Wide_6.FxlGrp.names)
 Wide_7.FxlGrp <- Wide_6.FxlGrp %>%
   rowwise() %>% 
   summarize("NonNative-AF" = sum(c_across(starts_with("NonNative-AF")), na.rm = T),
-            "Native-AG" = sum(c_across(starts_with("Native-AG")), na.rm = T),
+            "Native-PG" = sum(c_across(starts_with("Native-PG")), na.rm = T),
            # "Native-PF" = sum(c_across(starts_with("Native-PF")), na.rm = T),
             "CAEX" = sum(c_across(starts_with("CAEX")), na.rm = T),
             "CESO" = sum(c_across(starts_with("CESO")), na.rm = T),
@@ -188,7 +189,7 @@ Wide_7.FxlGrp <- Wide_6.FxlGrp %>%
             "DELO" = sum(c_across(starts_with("DELO")), na.rm = T),
             "NonNative-AG" = sum(c_across(starts_with("NonNative-AG")), na.rm = T),
             "ESCA" = sum(c_across(starts_with("ESCA")), na.rm = T),
-            "XXX" = sum(c_across(starts_with("XXX")), na.rm = T),
+            "Other" = sum(c_across(starts_with("XXX")), na.rm = T),
             "HIIN" = sum(c_across(starts_with("HIIN")), na.rm = T),
             "LAGR" = sum(c_across(starts_with("LAGR")), na.rm = T),
            # "NonNative-PG" = sum(c_across(starts_with("NonNative-PG")), na.rm = T),

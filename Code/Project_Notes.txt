@@ -257,4 +257,50 @@ A. Turns out the native AG is ELTR which is a native rye grass.
     few occurrances in 2025 and one eariler year on small set of plots.  drop or keep?
 
 
+2025-08-10
+A. SHould always show the grazing treatments Plot.  for all experiments.
+B. plot treatment (mowed, etc) for the target data)
+C. subtreatment effect driven by scraping or mowing?
+D. show individual treatments / plots for the targetdata
 
+
+2025-08-21 
+Outline for analyses/results
+
+
+1. Plant community analyses (‘Methods’)
+A. Data collection types and methods
+B. Analysis methods
+
+2. Invasive weed cover response (‘Results’)
+A. List figure / tables
+B. HIIN (density, cover) - note: no pre-data but can look at trend in trt vs control
+C. CESO (density)
+D. Weeds functional group
+ 
+3. Native plant and wildlife habitat response (‘Results’)
+A. List figure / tables
+B. Thatch height / fuels
+C. Vegetation height
+D. Visual obstruction
+E. Bareground
+ 
+
+4. Overall plant community responses (‘Results’)
+A. List figure / tables
+B. Composition
+E. Yield
+ 
+ 
+2025-08-26
+Questions:
+
+1. MustardCovr_pct <int>, OR MustardDens_m2 <dbl>,  RUN THEM BOTH !!!
+2. YStarDens_m2 has lots of zeros - probably not great to model - presence absence?
+3. Need to add Ripgut to highly invasive grasses and forbes - BB pull from community data.  Red Brome as well?
+4. Split out the functional groups into groupings - non-desireable highly invasive vs the ones that are OK forage
+  erodium desireable and YST undesireable.
+  A. LR and DR will redo the groups and BB will rerun.
+  B. BB Send DR the most recent fxl group list.
+5. add the four native seeded for analysis.
+6. drop thatch_ac

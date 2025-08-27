@@ -10,7 +10,7 @@ par(mfrow = c(1, 1))
 fit_env.nb <- gllvm(Wide_7.FxlGrp, # Wide_6, 
                     Wide_7.env, family = "negative.binomial", 
                     num.lv = 1,
-                    formula = ~ SubTrt + Year.f + Rain.f + (1|Plot),
+                    formula = ~ Treatment + Year.f + Rain.f + (1|Plot),
                     seed = 1234)
 summary(fit_env.nb)
 plot(fit_env.nb, mfrow=c(3,2))
@@ -87,7 +87,9 @@ ggplot(aes(reorder(Type, -Estimate), Estimate, color = Type)) +
   coord_flip() +
   geom_hline(yintercept = 0, linetype = 2) +
   xlab(NULL) + 
-  theme_classic(base_size = 16) +
+  ylim(-20,20) + 
+  theme_gray(base_size = 16) +
+  theme(legend.position = "none") +
   facet_wrap(.~Covariate)
 
 ggsave("Output/glvvmPlot.jpg", width = 30, height = 20, units = "cm")
@@ -103,7 +105,10 @@ ggplot(aes(reorder(Species, -Estimate), Estimate, color = Type)) +
   coord_flip() +
   geom_hline(yintercept = 0, linetype = 2) +
   xlab(NULL) + 
+  ylim(-15,17) + 
   theme_gray(base_size = 10) +
+  theme(legend.position = c(0.8, 0.12),
+        legend.key.size = unit(0.5, 'cm')) + 
   facet_wrap(.~Covariate)
 
 ggsave("Output/glvvmPlotBySpecies.jpg", width = 30, height = 30, units = "cm")

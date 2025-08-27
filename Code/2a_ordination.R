@@ -11,13 +11,25 @@ plot(ord)
 stressplot(ord)
 
 adonis2.mod <- 
-  adonis2(Wide_7.FxlGrp ~ Rain.f + Year.f * Treatment * SubTrt,
+  adonis2(Wide_7.FxlGrp ~ PPT_CM + Year.f * Treatment * SubTrt,
           data = Wide_7.env,
           permutations = 1000,
           parallel = 16, 
           strata = Wide_7.env$Plot,
           by = "terms")
 adonis2.mod
+
+
+ord.fit <- envfit(ord ~ PPT_CM + Year.f * Treatment * SubTrt, data=Wide_7.env, perm=1000) ## envfit doesn't seem to do interactions
+(ord.fit)
+#summary(ord.fit)
+
+ord.fit$vectors$arrows
+
+plot(ord, dis="site")
+plot(ord.fit)
+ggord(ord.fit)
+
 
 
 
@@ -96,7 +108,7 @@ p.nms.Trt <-
   geom_point(data = df.ord, aes(x = MDS1, y = MDS2, color = SubTrt)) +
   stat_ellipse(geom = "polygon", data = df.ord, aes(x = MDS1, y = MDS2, 
                                                     fill = Treatment, color = Treatment), 
-               alpha = 0.2) +
+               alpha = 0.2, level = 0.8) +
   geom_text_repel(data = species, aes(x=MDS1, y=MDS2, label = species, color = type)) +
   facet_wrap(.~Year.f, ncol = 3)
 p.nms.Trt + scale_color_paletteer_d("ggsci::default_uchicago") +
@@ -105,24 +117,33 @@ p.nms.Trt + scale_color_paletteer_d("ggsci::default_uchicago") +
 ggsave("Output/nms_SubTrt.png", width = 25, height = 20, units = "cm")
 
 
-
-
-
-
-
-
+# add envfit arrows
 p.nms.SubTrt <- 
   ggplot() +
   geom_point(data = df.ord, aes(x = MDS1, y = MDS2, color = SubTrt)) +
   stat_ellipse(geom = "polygon", data = df.ord, aes(x = MDS1, y = MDS2, 
                                                     fill = SubTrt, color = SubTrt), 
-                                                    alpha = 0.2) +
+                                                    alpha = 0.2, level = 0.89) +
   geom_text_repel(data = species, aes(x=MDS1, y=MDS2, label = species, color = type)) +
+ #add the rain vector
+  annotate("segment", color = "darkblue", x=0, y=0, xend=0.512, yend=0.859,
+           arrow = arrow(length = unit(0.5, "cm"))) +
+  theme_gray(base_size = 14) + 
   facet_wrap(.~Year.f)
 p.nms.SubTrt + scale_color_paletteer_d("ggsci::default_uchicago") +
   scale_fill_paletteer_d("ggsci::default_uchicago")
 
-ggsave("Output/nms_SubTrt.png", width = 25, height = 20, units = "cm")
+ggsave("Output/nms_SubTrt.png", width = 35, height = 20, units = "cm")
+
+
+
+
+
+rain <- as_tibble(ord.fit[["vectors"]][["arrows"]])
+factors <- as_tibble(ord.fit[["factors"]][["centroids"]])
+
+p.nms.SubTrt + scale_color_paletteer_d("ggsci::default_uchicago") +
+  scale_fill_paletteer_d("ggsci::default_uchicago")
 
 
 
@@ -131,7 +152,7 @@ ggplot() +
   geom_point(data = df.ord, aes(x = MDS1, y = MDS2, color = Rain.f)) +
   stat_ellipse(geom = "polygon", data = df.ord, aes(x = MDS1, y = MDS2, 
                                                     fill = Rain.f, color = Rain.f), 
-                                                    alpha = 0.2) +
+                                                    alpha = 0.2, level = 0.89) +
   geom_text_repel(data = species, aes(x=MDS1, y=MDS2, label = species, color = type))
 p.nms.Rain + scale_color_paletteer_d("ggsci::default_uchicago") +
   scale_fill_paletteer_d("ggsci::default_uchicago")
