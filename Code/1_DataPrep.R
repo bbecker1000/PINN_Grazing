@@ -16,6 +16,7 @@ Wide_3 <- read_csv("Data/Wide 4_qaqc.csv")
 names(Wide_3)
 
 
+
 #split out the Substreatment into 2 columns
 Wide_3$SubTrt <-substring(Wide_3$Subtreatment, 2)
 #move left
