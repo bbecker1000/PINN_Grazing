@@ -7,7 +7,8 @@ fit1 <- brm(
   count ~ zBase * Trt + (1|patient),
   data = epilepsy, family = poisson(),
   prior = prior(normal(0, 10), class = b) +
-    prior(cauchy(0, 2), class = sd)
+    prior(cauchy(0, 2), class = sd),
+   backend = "stanr"
 )
 
 summary(fit1)
@@ -16,6 +17,27 @@ summary(fit1)
 t1 <- Sys.time()
 runtime <- t1-t0
 runtime
+
+
+t0 <- Sys.time()
+
+
+fit1.cmdstan <- brm(
+  count ~ zBase * Trt + (1|patient),
+  data = epilepsy, family = poisson(),
+  prior = prior(normal(0, 10), class = b) +
+    prior(cauchy(0, 2), class = sd),
+  backend = "cmdstanr"
+)
+
+summary(fit1.cmdstan)
+
+
+t1 <- Sys.time()
+runtime <- t1-t0
+runtime
+
+
 
 
 # fit2 <- brm(rating ~ period + carry + cs(treat),
