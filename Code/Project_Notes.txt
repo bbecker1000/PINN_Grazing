@@ -300,7 +300,12 @@ Questions:
 3. Need to add Ripgut to highly invasive grasses and forbes - BB pull from community data.  Red Brome as well?
 4. Split out the functional groups into groupings - non-desireable highly invasive vs the ones that are OK forage
   erodium desireable and YST undesireable.
-  A. LR and DR will redo the groups and BB will rerun.
+  A. LR and DR will redo the groups and BB will rerun.  DONE - SEE NEXT ENTRY
   B. BB Send DR the most recent fxl group list.
 5. add the four native seeded for analysis.
 6. drop thatch_ac
+
+2026-03-10
+1. The rest of the team has reviewed the plant list and identified plant groups which include: 
+invasive weed, nonnative forb, nonnative grass, native forb, and native grass. 
+See attached updated spreadsheet. Would you be able to rerun the analysis using these categories?

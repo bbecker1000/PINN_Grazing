@@ -82,7 +82,7 @@ Wide_5 <- bind_cols(Wide_4, DeadSum)
 #rename the columns to groupings
 names(Wide_5)
 
-SpeciesCode <- read_excel("Data/Species_qaqc3.xlsx") #updated to "3" 2025-08-04  
+SpeciesCode <- read_excel("Data/Species_qaqc3_CalIPCcategories_lmr_abr2.xlsx") #updated to "3...." 2026-03-10  
 (SpeciesCode)
 #View(SpeciesCode)
 #remove the _d

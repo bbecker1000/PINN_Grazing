@@ -78,22 +78,40 @@ glvvm.coef.plot$Type <- ifelse(glvvm.coef.plot$Species == "HIIN", "Summer Mustar
                                                                                                                                  ))))))))))))))))))
 
 # Forest PLot  
+
+
+
+
+
+
+
+# Define the labeller with your new names
+covariate_labels <- c(
+  "Rain.fHigh"             = "Rain High",
+  "Rain.fMed"              = "Rain Med",
+  "TreatmentGrazed"        = "Grazed",
+  "TreatmentSeasonal.Graze" = "Seasonal Grazed",
+  "X1...PlotTRUE"          = "Post Treatment",
+  "Year.f2022"             = "2022",
+  "Year.f2023"             = "2023",
+  "Year.f2024"             = "2024",
+  "Year.f2025"             = "2025"
+)
+
 #remove the XXX species
 glvvm.coef.plot %>% 
   filter(Species != "XXX") %>%
-
 ggplot(aes(reorder(Type, -Estimate), Estimate, color = Type)) +
-  geom_pointrange(aes(ymin = Estimate-2*Estimate.sd, ymax = Estimate+2*Estimate.sd)) +
+  geom_pointrange(aes(ymin = Estimate - 2*Estimate.sd, ymax = Estimate + 2*Estimate.sd)) +
   coord_flip() +
   geom_hline(yintercept = 0, linetype = 2) +
-  xlab(NULL) + 
-  ylim(-20,20) + 
+  xlab(NULL) +
+  ylim(-20, 20) +
   theme_gray(base_size = 16) +
   theme(legend.position = "none") +
-  facet_wrap(.~Covariate)
+  facet_wrap(.~Covariate, labeller = labeller(Covariate = covariate_labels))
 
 ggsave("Output/glvvmPlot.jpg", width = 30, height = 20, units = "cm")
-
 
 
 # Forest Plot by species
@@ -109,7 +127,7 @@ ggplot(aes(reorder(Species, -Estimate), Estimate, color = Type)) +
   theme_gray(base_size = 10) +
   theme(legend.position = c(0.8, 0.12),
         legend.key.size = unit(0.5, 'cm')) + 
-  facet_wrap(.~Covariate)
+  facet_wrap(.~Covariate, labeller = labeller(Covariate = covariate_labels))
 
 ggsave("Output/glvvmPlotBySpecies.jpg", width = 30, height = 30, units = "cm")
 
