@@ -274,22 +274,22 @@ B. Analysis methods
 
 2. Invasive weed cover response (‘Results’)
 A. List figure / tables
-B. HIIN (density, cover) - note: no pre-data but can look at trend in trt vs control
-C. CESO (density)
-D. Weeds functional group
+B. HIIN (density, cover) - (DONE)    note: no pre-data but can look at trend in trt vs control
+C. CESO (density)                   (DONE) - JUST PLOT SINCE MOSTLY ZEROS, poor models
+D. Weeds functional group           
  
 3. Native plant and wildlife habitat response (‘Results’)
 A. List figure / tables
-B. Thatch height / fuels
-C. Vegetation height
-D. Visual obstruction
-E. Bareground
+B. Thatch height / fuels          (DONE)
+C. Vegetation height              (DONE)
+D. Visual obstruction            (DONE)
+E. Bareground                    (DONE)
  
 
 4. Overall plant community responses (‘Results’)
 A. List figure / tables
-B. Composition
-E. Yield
+B. Composition  (DONE - NMS)
+E. Yield        (DONE)
  
  
 2025-08-26
@@ -309,3 +309,50 @@ Questions:
 1. The rest of the team has reviewed the plant list and identified plant groups which include: 
 invasive weed, nonnative forb, nonnative grass, native forb, and native grass. 
 See attached updated spreadsheet. Would you be able to rerun the analysis using these categories?
+
+########################################################
+
+2026-03-23 UPDATE
+BB Show results:
+
+Outline for analyses/results from 2025-08-21 
+
+1. Plant community analyses (‘Methods’)
+A. Data collection types and methods
+B. Analysis methods
+
+2. Invasive weed cover response (‘Results’)
+A. List figure / tables  - 
+B. HIIN (density, cover) - 
+            (DONE)    note: no pre-data but can look at trend in trt vs control
+            GLMER
+C. CESO (density)                  
+            (DONE)
+            JUST PLOT SINCE MOSTLY ZEROS, poor models
+D. Weeds functional group    
+            ??????
+ 
+3. Native plant and wildlife habitat response (‘Results’)
+A. List figure / tables
+B. Thatch height / fuels          
+            (DONE)
+            brms
+C. Vegetation height             
+            (DONE)
+            glmer
+D. Visual obstruction          
+            (DONE)
+            brms
+E. Bareground                   
+          (DONE)
+ 
+
+4. Overall plant community responses (‘Results’)
+A. List figure / tables
+B. Composition  (DONE - NMS)
+E. Yield        (DONE)
+
+
+
+
+
