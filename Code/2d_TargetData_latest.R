@@ -252,6 +252,7 @@ names(TargetData)
 AvVegHeight.m1 <- glmer(AvVegHeight_cm ~ Year.f + Plot + Subplot + (1|Block/Plot),
                         family = Gamma(link = "log"), nAGQ=0, #easier solution
                         data = TargetData)
+summary(AvVegHeight.m1)
 
 #plot_model(AvVegHeight.m1, type = "int", terms = c("Year.f", "Subplot","Plot"))
 #see plot 2
@@ -359,39 +360,76 @@ gc()  # force garbage collection
 
 
 
-
+#4E
 #AllYieldEstEst_lbsAc
 
 hist(TargetData$AllYieldEstEst_lbsAc)
 
-
-names(TargetData)
-
-
-hist(TargetData$MustardDens_m2)
-hist(TargetData$MustardCovr_pct)
-
 ## BB check units and troubleshoot why output units 
 
-AllYieldEstEst_lbsAc.m1 <- glmer(AllYieldEstEst_lbsAc ~  Year.f + Plot + Subplot + PPT_CM + (1|Block/Plot),
-                                 family = Gamma(link = "log"), nAGQ=1,
-                     data = TargetData)
-summary(AllYieldEstEst_lbsAc.m1)
-plot(AllYieldEstEst_lbsAc.m1)
-p.AllYieldEstEst_lbsAc.m1 <- plot_model(AllYieldEstEst_lbsAc.m1) + geom_hline(yintercept = 1, linetype = 2) +
-  ggtitle("Yield lbs/ac") + 
-  scale_color_paletteer_d("wesanderson::Cavalcanti1") +
-  scale_fill_paletteer_d("wesanderson::Cavalcanti1")
-p.AllYieldEstEst_lbsAc.m1 
-#plot_model(thatch.m1, type = "int", terms = c("Year.f", "Subplot"))
-#see plot 2 or
-plot_predictions(VisObs_Av.m1, by = c("Year.f", "Subplot", "Plot")) +
-  theme_gray(base_size = 14) + 
-  ylab("AllYieldEstEst_lbsAc") + 
+AllYield.m1.brms <- brm(
+  AllYieldEstEst_lbsAc ~ Year.f + Plot + Subplot + PPT_CM + (1|Block/Plot),
+  data    = TargetData,
+  family  = Gamma(link = "log"),
+  prior   = c(
+    prior(normal(0, 1),   class = b),
+    prior(normal(7, 1),   class = Intercept),  # log(1500) ≈ 7.3, near your lower-range mean
+    prior(normal(0, 1),   class = sd),
+    prior(gamma(2, 0.5),  class = shape)
+  ),
+  chains  = 4,
+  iter    = 2000,
+  warmup  = 1000,
+  cores   = 4,
+  threads = threading(16),
+  backend = "cmdstanr",
+  seed    = 123
+)
+
+pp_check(AllYield.m1.brms, ndraws = 100)
+summary(AllYield.m1.brms)
+
+
+# 2. Main effects
+plot(conditional_effects(AllYield.m1.brms))
+
+# 3. Year x Subplot by Plot panel
+conditions <- data.frame(Plot = levels(factor(TargetData$Plot)))
+
+ce <- conditional_effects(AllYield.m1.brms,
+                          effects = "Year.f:Subplot",
+                          conditions = conditions)
+
+p.AllYield_predict <- plot(ce, plot = FALSE)[[1]] +
+  theme_gray(base_size = 14) +
+  ylab("Yield (lbs/ac)") +
   xlab("Year") +
-  scale_color_paletteer_d("wesanderson::Cavalcanti1") +
-  scale_fill_paletteer_d("wesanderson::Cavalcanti1") + 
-  ylim(10,40)
+  scale_color_manual(values = subtrt_colors) +
+  scale_fill_manual(values = subtrt_colors) +
+  facet_wrap(~Plot) +
+  ggtitle("Estimated Yield by Treatment and Year")
+
+p.AllYield_predict
+
+ggsave("Output/AllYield_predict.png", p.AllYield_predict,
+       width = 35, height = 20, units = "cm", dpi = 300)
+rm(p.AllYield_predict, ce)
+gc()
+
+# 4. PPT_CM effect (continuous)
+ce_ppt <- conditional_effects(AllYield.m1.brms, effects = "PPT_CM")
+
+p.AllYield_ppt <- plot(ce_ppt, plot = FALSE)[[1]] +
+  theme_gray(base_size = 14) +
+  ylab("Yield (lbs/ac)") +
+  xlab("Precipitation (cm)") +
+  ggtitle("Effect of Rainfall on Yield")
+
+p.AllYield_ppt
+ggsave("Output/AllYield_ppt.png", p.AllYield_ppt,
+       width = 20, height = 15, units = "cm", dpi = 300)
+rm(p.AllYield_ppt, ce_ppt)
+gc()
 
 
 

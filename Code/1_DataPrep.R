@@ -70,12 +70,12 @@ Wide_3 <- Wide_3 %>%
 
 #sum dead cover
 DeadSum <- Wide_3 %>% 
-  select(contains("_d")) %>%
+  dplyr::select(contains("_d")) %>%
     reframe(DeadSum = rowSums(across())) 
 
 #remove old _d columns and add deadsum
 Wide_4 <- Wide_3 %>%
-  select(-contains("_d"))
+  dplyr::select(-contains("_d"))
 
 Wide_5 <- bind_cols(Wide_4, DeadSum)
 

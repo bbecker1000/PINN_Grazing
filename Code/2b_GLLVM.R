@@ -9,25 +9,24 @@ par(mfrow = c(1, 1))
 #GLLVM neg binomial with covariates
 fit_env.nb <- gllvm(Wide_7.FxlGrp, # Wide_6, 
                     Wide_7.env, family = "negative.binomial", 
-                    num.lv = 1,
+                    method = "LA", 
+                    num.lv = 1, 
                     formula = ~ Treatment + Year.f + Rain.f + (1|Plot),
                     seed = 1234)
-summary(fit_env.nb)
+
+# Check convergence
+fit_env.nb$convergence  # should be 0
+
+# Quick diagnostics
 plot(fit_env.nb, mfrow=c(3,2))
+summary(fit_env.nb)     # coefficients
+
+# Ordination plot if using num.lv > 0
+par(mfrow = c(1, 1))
+gllvm::ordiplot(fit_env.nb, biplot = TRUE)
+
 coefplot(fit_env.nb, cex.ylab = 0.7, mar = c(4, 5, 2, 1), mfrow=c(3,4),
          order = FALSE )
-
-
-# fit_env.nb.PrePost <- gllvm(Wide_6,  
-#                             Wide_6.env, family = "negative.binomial", 
-#                             num.lv = 1,
-#                             formula = ~ Subtreatment * PrePost * Rain.f + (1|Plot),
-#                             seed = 1234)
-# summary(fit_env.nb.PrePost)
-# plot(fit_env.nb.PrePost, mfrow=c(3,2))
-# coefplot(fit_env.nb.PrePost, cex.ylab = 0.7, mar = c(4, 5, 2, 1), mfrow=c(3,4),
-#          order = FALSE )
-
 
 
 #make nicer plots of  fit_env.nb
@@ -46,38 +45,6 @@ estimate.sd.tidy <- estimate.sd %>%
 
 glvvm.coef.plot <- tibble(cbind(estimate.tidy, estimate.sd.tidy[,-2]))
 
-#filter(SpeciesCode_qaqc, FxlGrp == "NAF")
-#create type field
-# glvvm.coef.plot$Type <- ifelse(glvvm.coef.plot$Species == "HIIN", "Summer Mustard",
-#                                ifelse(glvvm.coef.plot$Species == "CESO", "Yellow Star Thistle", 
-#                                       ifelse(glvvm.coef.plot$Species == "ESCA", "Wildflower",
-#                                              ifelse(glvvm.coef.plot$Species == "DELO", "Wildflower",
-#                                                     ifelse(glvvm.coef.plot$Species == "CAEX", "Wildflower",
-#                                                            ifelse(glvvm.coef.plot$Species == "LAGR", "Wildflower",
-#                                                                   ifelse(glvvm.coef.plot$Species == "ACAM", "Native Forb",
-#                                                                          ifelse(glvvm.coef.plot$Species == "AMSIN", "Native Forb", 
-#                                                                                 ifelse(glvvm.coef.plot$Species == "CACO", "Native Forb",
-#                                                                                        ifelse(glvvm.coef.plot$Species == "CAME", "Native Forb",
-#                                                                                               ifelse(glvvm.coef.plot$Species == "CLPU", "Native Forb",
-#                                                                                                      ifelse(glvvm.coef.plot$Species == "CRSE", "Native Forb",
-#                                                                                                             ifelse(glvvm.coef.plot$Species == "EUCH", "Native Forb", 
-#                                                                                                                    ifelse(glvvm.coef.plot$Species == "LUBI", "Native Forb",
-#                                                                                                                           ifelse(glvvm.coef.plot$Species == "TRGR", "Native Forb",
-#                                                                                                                                  ifelse(glvvm.coef.plot$Species == "TRIFO", "Native Forb",
-#                                                                                                                                         ifelse(glvvm.coef.plot$Species == "CEGL", "Non-Native Forb", 
-#                                                                                                                                                ifelse(glvvm.coef.plot$Species == "ERBO", "Non-Native Forb",
-#                                                                                                                                                       ifelse(glvvm.coef.plot$Species == "ERCI", "Non-Native Forb",
-#                                                                                                                                                              ifelse(glvvm.coef.plot$Species == "ERMO", "Non-Native Forb",
-#                                                                                                                                                                     ifelse(glvvm.coef.plot$Species == "LAAM", "Non-Native Forb",
-#                                                                                                                                                                            ifelse(glvvm.coef.plot$Species == "MEPO", "Non-Native Forb",
-#                                                                                                                                                                                   ifelse(glvvm.coef.plot$Species == "STME", "Non-Native Forb",
-#                                                                                                                                                                                          ifelse(glvvm.coef.plot$Species == "VEPE", "Non-Native Forb",
-#                                                                                                                                                                                                 ifelse(glvvm.coef.plot$Species == "BareGround", "BareGround",
-#                                                                                                                                                                                                        ifelse(glvvm.coef.plot$Species == "DeadSum", "DeadSum",
-#                                                                                                                                                                                                 "Other"))))))))
-#                                                                                                                                  ))))))))))))))))))
-# 
-
 #tidy create type field
 glvvm.coef.plot <- glvvm.coef.plot %>%
   mutate(Type = case_when(
@@ -92,13 +59,6 @@ glvvm.coef.plot <- glvvm.coef.plot %>%
     Species == "DeadSum"                                             ~ "Dead",
     .default = "Other"
   ))
-
-# Forest PLot  
-
-
-
-
-
 
 
 # Define the labeller with your new names

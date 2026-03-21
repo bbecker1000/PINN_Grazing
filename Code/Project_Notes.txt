@@ -318,39 +318,43 @@ BB Show results:
 Outline for analyses/results from 2025-08-21 
 
 1. Plant community analyses (‘Methods’)
-A. Data collection types and methods
-B. Analysis methods
+  A. Data collection types and methods
+  B. Analysis methods
 
 2. Invasive weed cover response (‘Results’)
-A. List figure / tables  - 
-B. HIIN (density, cover) - 
+  A. List figure / tables  - 
+  B. HIIN (density, cover) - 
             (DONE)    note: no pre-data but can look at trend in trt vs control
             GLMER
-C. CESO (density)                  
+  C. CESO (density)                  
             (DONE)
             JUST PLOT SINCE MOSTLY ZEROS, poor models
-D. Weeds functional group    
+  D. Weeds functional group    
             ??????
  
 3. Native plant and wildlife habitat response (‘Results’)
-A. List figure / tables
-B. Thatch height / fuels          
+  A. List figure / tables
+  B. Thatch height / fuels          
             (DONE)
             brms
-C. Vegetation height             
+  C. Vegetation height             
             (DONE)
             glmer
-D. Visual obstruction          
+  D. Visual obstruction          
             (DONE)
             brms
-E. Bareground                   
+  E. Bareground                   
           (DONE)
+          brms
  
 
 4. Overall plant community responses (‘Results’)
-A. List figure / tables
-B. Composition  (DONE - NMS)
-E. Yield        (DONE)
+  A. List figure / tables
+  B. Composition  (DONE)
+                NMDS
+                GLLVM
+  C. Yield      (DONE)
+                brms
 
 
 
