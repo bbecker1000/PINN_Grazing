@@ -202,6 +202,7 @@ ggsave("Output/nms_SubTrt.png", width = 35, height = 20, units = "cm")
 
 
 
+
 rain <- as_tibble(ord.fit[["vectors"]][["arrows"]])
 factors <- as_tibble(ord.fit[["factors"]][["centroids"]])
 
