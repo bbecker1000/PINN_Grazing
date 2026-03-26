@@ -1,263 +1,262 @@
-library(tidyverse)
-library(readr)
-library(readxl)
-library(vegan)
-library(ggordiplots)
-library(ggrepel)
-library(cowplot)
-library(lme4)
-library(glmmTMB)
-library(sjPlot)
-library(broom)
-library(stringr)
-#library(ggord)
+# ============================================================
+# SAVE THIS AS: Code/startup.R
+# SOURCE AT START OF EVERY SESSION: source("Code/startup.R")
+# ============================================================
+
+# Set library path
+.libPaths(c("/home/jovyan/R/library", .libPaths()))
+
+# Load all packages
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(readr)
+  library(readxl)
+  library(vegan)
+  library(cowplot)
+  library(lme4)
+  library(glmmTMB)
+  library(sjPlot)
+  library(broom)
+  library(stringr)
+  library(brms)
+  library(cmdstanr)
+  library(DHARMa)
+  library(ggeffects)
+  library(marginaleffects)
+  library(ggrepel)
+  library(paletteer)
+  library(MASS)
+  library(patchwork)
+  library(gllvm)
+})
+
+# Fix common masking conflicts
+select    <- dplyr::select
+filter    <- dplyr::filter
+summarise <- dplyr::summarise
+rename    <- dplyr::rename
+ordiplot  <- gllvm::ordiplot
+
+cat("All packages loaded successfully\n")
+cat("Session started:", format(Sys.time(), "%Y-%m-%d %H:%M"), "\n")
+
+# ============================================================
+# LOAD DATA
+# ============================================================
 Wide_3 <- read_csv("Data/Wide 4_qaqc.csv")
-(Wide_3)
+str(Wide_3)
 names(Wide_3)
 
+# ============================================================
+# DATA WRANGLING
+# ============================================================
 
-
-#split out the Substreatment into 2 columns
-Wide_3$SubTrt <-substring(Wide_3$Subtreatment, 2)
-#move left
+# Split out the Subtreatment into 2 columns
+Wide_3$SubTrt <- substring(Wide_3$Subtreatment, 2)
 Wide_3 <- Wide_3 %>% relocate(SubTrt, .after = Treatment)
 
-#remove the subtreatments with UM and UMS per Team
-# Wide_3 <- Wide_3 %>% filter(Subtreatment != "UM")
-# Wide_3 <- Wide_3 %>% filter(Subtreatment != "UMS")
+# Fix names using case_when (cleaner than nested ifelse)
+Wide_3 <- Wide_3 %>%
+  mutate(
+    SubTrt = case_when(
+      SubTrt == "C"  ~ "Control",
+      SubTrt == "S"  ~ "Scraped + Seeded",
+      SubTrt == "M"  ~ "Mowed",
+      SubTrt == "MS" ~ "Mowed + Scraped + Seeded",
+      .default = SubTrt
+    ),
+    Treatment = case_when(
+      Treatment == "G" ~ "Grazed",
+      Treatment == "S" ~ "Seasonal Graze",
+      .default = "Ungrazed"
+    ),
+    Subtreatment = case_when(
+      Subtreatment == "GC"  ~ "Grazed",
+      Subtreatment == "GS"  ~ "Grazed + Scraped + Seeded",
+      Subtreatment == "SC"  ~ "Seasonal Graze",
+      Subtreatment == "SS"  ~ "Seasonal Graze + Scraped + Seeded",
+      Subtreatment == "UC"  ~ "Ungrazed",
+      Subtreatment == "UM"  ~ "Ungrazed + Mowed",
+      Subtreatment == "UMS" ~ "Ungrazed + Mowed + Scraped + Seeded",
+      Subtreatment == "US"  ~ "Ungrazed + Scraped + Seeded",
+      .default = Subtreatment
+    )
+  )
 
-
-#fix names
-unique(Wide_3$SubTrt)
-Wide_3$SubTrt <- ifelse(Wide_3$SubTrt == "C", "Control",
-                           ifelse(Wide_3$SubTrt == "S", "Scraped + Seeded",
-                                  ifelse(Wide_3$SubTrt == "M", "Mowed",
-                                         ifelse(Wide_3$SubTrt == "MS", "Mowed + Scraped + Seeded",
-                                                Wide_3$SubTrt))))
-
-
-Wide_3$Treatment <- ifelse(Wide_3$Treatment == "G", "Grazed",
-                           ifelse(Wide_3$Treatment == "S", "Seasonal Graze",
-                                  "Ungrazed"))
-unique(Wide_3$Subtreatment)
-
-Wide_3$Subtreatment <- ifelse(Wide_3$Subtreatment == "GC", "Grazed",
-                           ifelse(Wide_3$Subtreatment == "GS", "Grazed + Scraped + Seeded",
-                                  ifelse(Wide_3$Subtreatment == "SC", "Seasonal Graze",
-                                         ifelse(Wide_3$Subtreatment == "SS", "Seasonal Graze + Scraped + Seeded",
-                                                ifelse(Wide_3$Subtreatment == "UC", "Ungrazed",
-                                                       ifelse(Wide_3$Subtreatment == "UM", "Ungrazed + Mowed",
-                                                              ifelse(Wide_3$Subtreatment == "UMS", "Ungrazed + Mowed + Scraped + Seeded",
-                                                                     ifelse(Wide_3$Subtreatment == "US", "Ungrazed + Scraped + Seeded",
-                                                                            Wide_3$Subtreatment))))))))
-
-
-
-#Wide_3 <- Wide_3 %>% filter(Year != 2021)
-
-
-#Wide_3 <- Wide_3 %>% filter(Subtreatment != "Ungrazed+Mowed")
-#Wide_3 <- Wide_3 %>% filter(Subtreatment != "Ungrazed+Mowed+Seeded")
-
-#remove if any columns that sum to zero
-Wide_3 <- Wide_3 %>% 
+# Remove columns that sum to zero
+Wide_3 <- Wide_3 %>%
   select_if(negate(function(col) is.numeric(col) && sum(col) < 1))
 
-#check that all rows sum > 0
-(Wide_3[-c(1:5)] %>% filter(if_all(everything(.), ~. != 0)))
+# Check all rows sum > 0
+Wide_3[-c(1:5)] %>% filter(if_all(everything(.), ~. != 0))
 
-##Combine all dead material from previous year into a single column and remove the _d columns
-
-#sum dead cover
-DeadSum <- Wide_3 %>% 
+# Sum dead cover and remove _d columns
+DeadSum <- Wide_3 %>%
   dplyr::select(contains("_d")) %>%
-    reframe(DeadSum = rowSums(across())) 
+  reframe(DeadSum = rowSums(across()))
 
-#remove old _d columns and add deadsum
 Wide_4 <- Wide_3 %>%
   dplyr::select(-contains("_d"))
 
 Wide_5 <- bind_cols(Wide_4, DeadSum)
 
-#rename the columns to groupings
-names(Wide_5)
+# ============================================================
+# SPECIES CODES
+# ============================================================
+SpeciesCode <- read_excel("Data/Species_qaqc3_CalIPCcategories_lmr_abr2.xlsx")
+view(SpeciesCode)
 
-SpeciesCode <- read_excel("Data/Species_qaqc3_CalIPCcategories_lmr_abr2.xlsx") #updated to "3...." 2026-03-10  
-(SpeciesCode)
-#View(SpeciesCode)
-#remove the _d
-SpeciesCode <- SpeciesCode %>% 
+# Remove _d species
+SpeciesCode <- SpeciesCode %>%
   filter(!str_detect(Species, '_d'))
 
-unique(SpeciesCode$FxlGrp)  # = 8 groups
+unique(SpeciesCode$FxlGrp)
 
-SpeciesCode$FxlGrp <- 
-  ifelse(SpeciesCode$FxlGrp == "YAF", "Native-AF",
-            ifelse(SpeciesCode$FxlGrp == "YPG", "Native-PG",
-                  ifelse(SpeciesCode$FxlGrp == "YPF", "Native-PF",
-                 #      ifelse(SpeciesCode$FxlGrp == "YPG", "Native-PG",
-                              ifelse(SpeciesCode$FxlGrp == "NAG", "NonNative-AG",
-                                     ifelse(SpeciesCode$FxlGrp == "NPF", "NonNative-PF",
-                                            ifelse(SpeciesCode$FxlGrp == "NAF", "NonNative-AF",
-                                              SpeciesCode$FxlGrp))))))
+# Rename FxlGrp using case_when (cleaner than nested ifelse)
+SpeciesCode <- SpeciesCode %>%
+  mutate(FxlGrp = case_when(
+    FxlGrp == "YAF" ~ "Native-AF",
+    FxlGrp == "YPG" ~ "Native-PG",
+    FxlGrp == "YPF" ~ "Native-PF",
+    FxlGrp == "NAG" ~ "NonNative-AG",
+    FxlGrp == "NPF" ~ "NonNative-PF",
+    FxlGrp == "NAF" ~ "NonNative-AF",
+    .default = FxlGrp
+  ))
 
+# ============================================================
+# ENVIRONMENT FILE AND RAINFALL
+# ============================================================
+Wide_6.env <- Wide_5[, c(1:5)]
+Wide_6     <- Wide_5[, -c(1:5)]
 
-#files for MDS
-Wide_6.env <- Wide_5[,c(1:5)]
-
-Wide_6     <- Wide_5[,-c(1:5)]
-
-
-#add rainfall to .env file
 RAIN <- read_csv("Data/PINN_PPT_rainfall.csv")
-head(RAIN)
 colnames(RAIN)[colnames(RAIN) == 'Water_Year'] <- 'Year'
 
 Wide_6.env <- left_join(Wide_6.env, RAIN, by = "Year")
 hist(Wide_6.env$PPT_CM)
 
-Wide_6.env$Rain.f <- ifelse(Wide_6.env$PPT_CM < 30, "Low", 
-                                ifelse(Wide_6.env$PPT_CM > 60, "High", 
-                                       "Med"))
-                                  
-Wide_6.env$Rain.f <- factor(Wide_6.env$Rain.f,
-                               levels = c("Low", "Med", "High"))
+# Rainfall categories
+Wide_6.env <- Wide_6.env %>%
+  mutate(
+    Rain.f = case_when(
+      PPT_CM < 30 ~ "Low",
+      PPT_CM > 60 ~ "High",
+      .default    = "Med"
+    ),
+    Rain.f    = factor(Rain.f, levels = c("Low", "Med", "High")),
+    PrePost.f = factor(ifelse(Year == 2021, "Pre", "Post"),
+                       levels = c("Pre", "Post"))
+  )
 
+# ============================================================
+# SET FACTORS
+# ============================================================
+Wide_6.env <- Wide_6.env %>%
+  mutate(
+    Year.f       = as.factor(Year),
+    PrePost      = as.factor(ifelse(Year < 2022, "A", "B")),
+    Treatment    = factor(Treatment,
+                          levels = c('Ungrazed', 'Grazed', 'Seasonal Graze')),
+    SubTrt       = factor(SubTrt,
+                          levels = c('Control', 'Scraped + Seeded',
+                                     'Mowed', 'Mowed + Scraped + Seeded')),
+    Subtreatment = factor(Subtreatment,
+                          levels = c("Ungrazed", "Ungrazed + Scraped + Seeded",
+                                     "Ungrazed + Mowed",
+                                     "Ungrazed + Mowed + Scraped + Seeded",
+                                     "Grazed", "Grazed + Scraped + Seeded",
+                                     "Seasonal Graze",
+                                     "Seasonal Graze + Scraped + Seeded")),
+    Rain.f       = factor(Rain.f, levels = c("Low", "Med", "High"))
+  )
 
+Wide_7.env <- Wide_6.env
 
-Wide_6.env$PrePost.f <- ifelse(Wide_6.env$Year == 2021, "Pre", "Post")
+# ============================================================
+# SPECIES GROUPING LOOKUP
+# ============================================================
+lookup <- data.frame(SpeciesCode[, c(1, 6)])
 
-Wide_6.env$PrePost.f <- factor(Wide_6.env$PrePost.f,
-                            levels = c("Pre", "Post"))
-
-                           
-
-
-
-
-#new RAIN#new wide file to assign FxlGrps to species codes.
-#get vector of 
-
-
-####-  if grouping -------------------------------------
-lookup = data.frame(SpeciesCode[,c(1,6)])
-head(lookup)
-
-#add unique trailing number to FxlGrp so it will play nice with tibble
+# Add unique trailing number to FxlGrp
 lookup$FxlGrp <- paste0(lookup$FxlGrp, "_", 1:length(lookup$FxlGrp))
 
+# Keep species of interest using case_when
+lookup <- lookup %>%
+  mutate(FxlGrp = case_when(
+    Species == "HIIN"    ~ "HIIN",
+    Species == "CESO"    ~ "CESO",
+    Species == "ESCA"    ~ "ESCA",
+    Species == "DELO"    ~ "DELO",
+    Species == "CAEX"    ~ "CAEX",
+    Species == "LAGR"    ~ "LAGR",
+    Species == "DeadSum" ~ "DeadSum",
+    Species == "BG"      ~ "BareGround",
+    .default = FxlGrp
+  ))
 
-#keep the species of interest
-lookup$FxlGrp <- ifelse(lookup$Species == "HIIN", "HIIN",
-                                 ifelse(lookup$Species == "CESO", "CESO",
-                                        ifelse(lookup$Species == "ESCA", "ESCA",
-                                               ifelse(lookup$Species == "DELO", "DELO",
-                                                      ifelse(lookup$Species == "CAEX", "CAEX",
-                                                             ifelse(lookup$Species == "LAGR", "LAGR",
-                                                                  ifelse(lookup$Species == "DeadSum", "DeadSum", 
-                                                                         ifelse(lookup$Species == "BG", "BareGround",         
-                                                                    lookup$FxlGrp))))))))
-
-
-
-#check
 unique(lookup$FxlGrp)
 
-######## #extra file
-Wide_6.FxlGrp <- tibble(Wide_6)
-
-#base R new header names
+# ============================================================
+# BUILD WIDE_7.FxlGrp
+# ============================================================
+Wide_6.FxlGrp       <- tibble(Wide_6)
 Wide_6.FxlGrp.names <- lookup$FxlGrp[match(names(Wide_6.FxlGrp), lookup$Species)]
-
-#add name to row 43
 Wide_6.FxlGrp.names[43] <- "DeadSum"
+colnames(Wide_6.FxlGrp) <- Wide_6.FxlGrp.names
 
-#add names to 
-Wide_6.FxlGrp
-
-colnames(Wide_6.FxlGrp) <- c(Wide_6.FxlGrp.names)
-
-
-# sum across
 Wide_7.FxlGrp <- Wide_6.FxlGrp %>%
-  rowwise() %>% 
-  summarize("NonNative-AF" = sum(c_across(starts_with("NonNative-AF")), na.rm = T),
-            "Native-PG" = sum(c_across(starts_with("Native-PG")), na.rm = T),
-           # "Native-PF" = sum(c_across(starts_with("Native-PF")), na.rm = T),
-            "CAEX" = sum(c_across(starts_with("CAEX")), na.rm = T),
-            "CESO" = sum(c_across(starts_with("CESO")), na.rm = T),
-            "Native-AF" = sum(c_across(starts_with("Native-AF")), na.rm = T),
-            "DELO" = sum(c_across(starts_with("DELO")), na.rm = T),
-            "NonNative-AG" = sum(c_across(starts_with("NonNative-AG")), na.rm = T),
-            "ESCA" = sum(c_across(starts_with("ESCA")), na.rm = T),
-            "Other" = sum(c_across(starts_with("XXX")), na.rm = T),
-            "HIIN" = sum(c_across(starts_with("HIIN")), na.rm = T),
-            "LAGR" = sum(c_across(starts_with("LAGR")), na.rm = T),
-           # "NonNative-PG" = sum(c_across(starts_with("NonNative-PG")), na.rm = T),
-            "DeadSum" = sum(c_across(starts_with("DeadSum")), na.rm = T),
-            "BareGround" = sum(c_across(starts_with("BareGround")), na.rm = T))
+  rowwise() %>%
+  summarize(
+    "NonNative-AF" = sum(c_across(starts_with("NonNative-AF")), na.rm = TRUE),
+    "Native-PG"    = sum(c_across(starts_with("Native-PG")),    na.rm = TRUE),
+    "CAEX"         = sum(c_across(starts_with("CAEX")),         na.rm = TRUE),
+    "CESO"         = sum(c_across(starts_with("CESO")),         na.rm = TRUE),
+    "Native-AF"    = sum(c_across(starts_with("Native-AF")),    na.rm = TRUE),
+    "DELO"         = sum(c_across(starts_with("DELO")),         na.rm = TRUE),
+    "NonNative-AG" = sum(c_across(starts_with("NonNative-AG")), na.rm = TRUE),
+    "ESCA"         = sum(c_across(starts_with("ESCA")),         na.rm = TRUE),
+    "Other"        = sum(c_across(starts_with("XXX")),          na.rm = TRUE),
+    "HIIN"         = sum(c_across(starts_with("HIIN")),         na.rm = TRUE),
+    "LAGR"         = sum(c_across(starts_with("LAGR")),         na.rm = TRUE),
+    "DeadSum"      = sum(c_across(starts_with("DeadSum")),      na.rm = TRUE),
+    "BareGround"   = sum(c_across(starts_with("BareGround")),   na.rm = TRUE)
+  )
 
- head(Wide_7.FxlGrp)                     
+head(Wide_7.FxlGrp)
 
- 
- 
- #SET SOME FACTORS
- Wide_6.env$Year.f <- as.factor(Wide_6.env$Year)
- Wide_6.env$PrePost <- as.factor(ifelse(Wide_6.env$Year < 2022, "A", "B"))
- 
- Wide_6.env$Treatment <- factor(Wide_6.env$Treatment, levels=c('Ungrazed', 'Grazed', 'Seasonal Graze'))
- Wide_6.env$SubTrt <- factor(Wide_6.env$SubTrt, levels=c('Control', 'Scraped + Seeded', 'Mowed', 'Mowed + Scraped + Seeded'))
- unique(Wide_6.env$Subtreatment)
- Wide_6.env$Subtreatment <- factor(Wide_6.env$Subtreatment, levels = c("Ungrazed", "Ungrazed + Scraped + Seeded",
-                                                                       "Ungrazed + Mowed", "Ungrazed + Mowed + Scraped + Seeded",
-                                                                       "Grazed", "Grazed + Scraped + Seeded", 
-                                                                       "Seasonal Graze", "Seasonal Graze + Scraped + Seeded"))
- Wide_6.env$Rain.f <- factor(Wide_6.env$Rain.f , levels = c("Low", "Med","High"))
- 
- unique(Wide_6.env$Subtreatment)
- 
- 
- Wide_7.env <- Wide_6.env
- 
- 
- ####- End grouping
- 
-#########
+# ============================================================
+# COLOR PALETTES (defined once, used throughout)
+# ============================================================
+subtrt_colors <- c(
+  "Control"                  = "#8B0000",
+  "Scraped + Seeded"         = "#4A4A4A",
+  "Mowed"                    = "#E69A00",
+  "Mowed + Scraped + Seeded" = "#4D7A3A"
+)
 
+type_colors <- c(
+  "Native"     = "#1B6CA8",
+  "Non-native" = "#CC4E00",
+  "Other"      = "black",
+  "Weed"       = "#006B6B",
+  "Wildflower" = "#B8006A"
+)
 
+rain_colors <- c(
+  "Low"  = "#6BAED6",
+  "Med"  = "#2171B5",
+  "High" = "#08306B"
+)
 
-
-
-################ old
-
-# SpeciesCode$Native <- ifelse(SpeciesCode$Native == "N", "NN", 
-#                              ifelse(SpeciesCode$Native == "Y", "N", SpeciesCode$Native))
-# 
-# SpeciesCode$Duration <- ifelse(SpeciesCode$Duration == "Y", "P", SpeciesCode$Duration)
-# 
-# SpeciesCode$NDL <- paste0(SpeciesCode$Native, SpeciesCode$Duration, SpeciesCode$Lifeform)
-# unique(SpeciesCode$NDL) 
-# 
-# 
-# lookup <- c(NAF = "ACAM",        
-#             XXG = "AG",           NNAG = "AIPR",        NAF =  "AMSIN",        XXX = "ASTER",        NNAG="AVBA",        
-#             XXX="AVEN",        NNAG= "AVFA",        NNAG = "BRBI",         NNAG = "BRBO",         NNAG = "BRDI",        
-#             NNAG ="BRDO",        NNAG = "BRHO",       NNAG =  "BRMA",        NNAG = "BRMAr",       NNAG = "BRNI",        
-#             NNAG ="BROM",        NNAG = "BROMUS",     NNAG =  "BRRU",         XXX= "BUBR",         NNAF="CABU",        
-#             NAF= "CACO",        NAF= "CAEX",         NAF="CAME",         NNAF="CEGL",        NNAF= "CESO",        
-#             NAF="CLPU",        NNPF= "COAR",        NAF= "CRSE",         NAF="DELO",        XXG= "DICA",        
-#             NAG="ELTR",        NNAF= "ERBO",        NNAF= "ERCI",        NNAF= "ERIC",        NNAF= "ERMO",        
-#             NPF="ESCA",        NAF= "EUCH",         NNAG="FEBR",       NNAG=  "FEMY",       NNAG=  "FESTUCA",     
-#             XXX="GAPH",       NAF=  "GIAC",        XXX= "GR",         UNK=  "H",          NNPF=  "HIIN",        
-#             XXX="HL",       NNAG=  "HOMA",         NNAG="HOMU",         NNAF="HYGL",        NNAF= "LAAM",        
-#             NAF="LAGR",       NNAF=  "LASE",       XXX=  "LETR",        NAF= "LOFI",        NAF= "LUBI",        
-#             NNAF="MEPO",       UNK=  "NA",         UNK = "NHL",          XXX="ONAG",       NPG=  "PEGRAS",      
-#             NAG="PLCA",         XXX="PLTA",       XXX=  "POAC",        NNPX= "RUCR",        NNAF= "SAAP",        
-#             NAF="STME",        NAF= "TRGR",         NAF="TRIFO",       XXF ="UNKF",       NAF=  "VEPE",        
-#             XXX="VUBR"
-# )
-# 
-
+# Facet labels
+year_labels <- c(
+  "2021" = "2021 (Pre-Treatment)",
+  "2022" = "2022",
+  "2023" = "2023",
+  "2024" = "2024",
+  "2025" = "2025"
+)
 
 
 

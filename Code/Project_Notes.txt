@@ -296,7 +296,7 @@ E. Yield        (DONE)
 Questions:
 
 1. MustardCovr_pct <int>, OR MustardDens_m2 <dbl>,  RUN THEM BOTH !!!
-2. YStarDens_m2 has lots of zeros - probably not great to model - presence absence?
+2. YStarDens_m2 has lots of zeros - probably not great to model - presence absence?  --? just graph
 3. Need to add Ripgut to highly invasive grasses and forbes - BB pull from community data.  Red Brome as well?
 4. Split out the functional groups into groupings - non-desireable highly invasive vs the ones that are OK forage
   erodium desireable and YST undesireable.
@@ -304,6 +304,8 @@ Questions:
   B. BB Send DR the most recent fxl group list.
 5. add the four native seeded for analysis.
 6. drop thatch_ac
+
+
 
 2026-03-10
 1. The rest of the team has reviewed the plant list and identified plant groups which include: 
@@ -323,9 +325,11 @@ Outline for analyses/results from 2025-08-21
 
 2. Invasive weed cover response (‘Results’)
   A. List figure / tables  - 
-  B. HIIN (density, cover) - 
+  B. HIIN 
+        cover) - 
             (DONE)    note: no pre-data but can look at trend in trt vs control
             GLMER
+        density
   C. CESO (density)                  
             (DONE)
             JUST PLOT SINCE MOSTLY ZEROS, poor models
@@ -346,17 +350,29 @@ Outline for analyses/results from 2025-08-21
   E. Bareground                   
           (DONE)
           brms
+  F. Yield      
+          (DONE)
+          brms
  
 
 4. Overall plant community responses (‘Results’)
   A. List figure / tables
   B. Composition  (DONE)
                 NMDS
-                GLLVM
-  C. Yield      (DONE)
-                brms
+                GLLVM (break out to compare against just control-treatment (remove the mowed treatment as a baseline -
+                look at year by treatment interaction)
 
 
+5. think about pulling the crosses since no ...(check with Amelia) 
+
+2026-03-23 Meeting
+
+1. remove the ghost plots from univariate results
+2. rename control to be MAIN TREATMENT with no SUBTreatment
+    need clarity on what to name the "control"
+3. BB redo univariate plots with treatments as main focus and results
+4. update species code to use lmr (weed functional group)  not "lmr" column....keep ystar and mustart separate.
+5. Prep update and send out. by end of week.
 
 
 
