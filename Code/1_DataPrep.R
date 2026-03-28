@@ -104,7 +104,11 @@ Wide_5 <- bind_cols(Wide_4, DeadSum)
 # SPECIES CODES
 # ============================================================
 SpeciesCode <- read_excel("Data/Species_qaqc3_CalIPCcategories_lmr_abr2.xlsx")
-view(SpeciesCode)
+#view(SpeciesCode)
+names(SpeciesCode)
+
+SpeciesCode$FxlGrp <- SpeciesCode$`lmr suggested groups`
+
 
 # Remove _d species
 SpeciesCode <- SpeciesCode %>%
@@ -113,16 +117,16 @@ SpeciesCode <- SpeciesCode %>%
 unique(SpeciesCode$FxlGrp)
 
 # Rename FxlGrp using case_when (cleaner than nested ifelse)
-SpeciesCode <- SpeciesCode %>%
-  mutate(FxlGrp = case_when(
-    FxlGrp == "YAF" ~ "Native-AF",
-    FxlGrp == "YPG" ~ "Native-PG",
-    FxlGrp == "YPF" ~ "Native-PF",
-    FxlGrp == "NAG" ~ "NonNative-AG",
-    FxlGrp == "NPF" ~ "NonNative-PF",
-    FxlGrp == "NAF" ~ "NonNative-AF",
-    .default = FxlGrp
-  ))
+# SpeciesCode <- SpeciesCode %>%
+#   mutate(FxlGrp = case_when(
+#     FxlGrp == "YAF" ~ "Native-AF",
+#     FxlGrp == "YPG" ~ "Native-PG",
+#     FxlGrp == "YPF" ~ "Native-PF",
+#     FxlGrp == "NAG" ~ "NonNative-AG",
+#     FxlGrp == "NPF" ~ "NonNative-PF",
+#     FxlGrp == "NAF" ~ "NonNative-AF",
+#     .default = FxlGrp
+#   ))
 
 # ============================================================
 # ENVIRONMENT FILE AND RAINFALL
@@ -208,15 +212,15 @@ colnames(Wide_6.FxlGrp) <- Wide_6.FxlGrp.names
 Wide_7.FxlGrp <- Wide_6.FxlGrp %>%
   rowwise() %>%
   summarize(
-    "NonNative-AF" = sum(c_across(starts_with("NonNative-AF")), na.rm = TRUE),
-    "Native-PG"    = sum(c_across(starts_with("Native-PG")),    na.rm = TRUE),
+    "Nonnative Forb" = sum(c_across(starts_with("Nonnative Forb")), na.rm = TRUE),
+    "Native Grass"    = sum(c_across(starts_with("Native Grass")),    na.rm = TRUE),
     "CAEX"         = sum(c_across(starts_with("CAEX")),         na.rm = TRUE),
     "CESO"         = sum(c_across(starts_with("CESO")),         na.rm = TRUE),
-    "Native-AF"    = sum(c_across(starts_with("Native-AF")),    na.rm = TRUE),
+    "Native Forb"    = sum(c_across(starts_with("Native Forb")),    na.rm = TRUE),
     "DELO"         = sum(c_across(starts_with("DELO")),         na.rm = TRUE),
-    "NonNative-AG" = sum(c_across(starts_with("NonNative-AG")), na.rm = TRUE),
+    "Nonnative Grass" = sum(c_across(starts_with("Nonnative Grass")), na.rm = TRUE),
     "ESCA"         = sum(c_across(starts_with("ESCA")),         na.rm = TRUE),
-    "Other"        = sum(c_across(starts_with("XXX")),          na.rm = TRUE),
+#    "Other"        = sum(c_across(starts_with("XXX")),          na.rm = TRUE),
     "HIIN"         = sum(c_across(starts_with("HIIN")),         na.rm = TRUE),
     "LAGR"         = sum(c_across(starts_with("LAGR")),         na.rm = TRUE),
     "DeadSum"      = sum(c_across(starts_with("DeadSum")),      na.rm = TRUE),
@@ -224,6 +228,7 @@ Wide_7.FxlGrp <- Wide_6.FxlGrp %>%
   )
 
 head(Wide_7.FxlGrp)
+view(Wide_7.FxlGrp)
 
 # ============================================================
 # COLOR PALETTES (defined once, used throughout)

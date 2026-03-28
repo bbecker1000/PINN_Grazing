@@ -371,7 +371,8 @@ Outline for analyses/results from 2025-08-21
 2. rename control to be MAIN TREATMENT with no SUBTreatment
     need clarity on what to name the "control"
 3. BB redo univariate plots with treatments as main focus and results
-4. update species code to use lmr (weed functional group)  not "lmr" column....keep ystar and mustart separate.
+4. update species code to use lmr (weed functional group)  not "lmr" column....keep ystar and mustart separate. 
+      DONE
 5. Prep update and send out. by end of week.
 
 

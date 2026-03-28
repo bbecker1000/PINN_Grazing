@@ -31,7 +31,8 @@ packages_cran <- c(
   "lme4", "glmmTMB", "sjPlot", "broom", "stringr",
   "brms", "DHARMa", "ggeffects", "marginaleffects",
   "ggrepel", "paletteer", "MASS", "patchwork",
-  "ggordiplots", "gllvm", "permute"
+  "ggordiplots", "gllvm", "permute", "vegan", "gllvm", "cowplot", 
+  "patchwork", "brms"
 )
 
 # Install missing packages
