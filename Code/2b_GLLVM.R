@@ -334,13 +334,13 @@ p.gllvm.pred.species <- pred_df %>%
              labeller = labeller(Species = all_species_labels)) +
   theme_gray(base_size = 12) +
   xlab("Year") +
-  ylab("Predicted abundance") +
+  ylab("Predicted percent cover (%)") +
   labs(color = NULL) +
   theme(
     axis.text.x     = element_text(angle = 45, hjust = 1),
     legend.position = "bottom"
   ) +
-  ggtitle("GLLVM Predicted Abundance by Species, Subtreatment and Year")
+  ggtitle("GLLVM Predicted Cover by Species, Subtreatment and Year")
 
 p.gllvm.pred.species
 ggsave("Output/gllvm_predicted_species.png", p.gllvm.pred.species,
@@ -376,13 +376,13 @@ p.gllvm.pred.type <- pred_df_type %>%
   facet_wrap(~Type, scales = "free_y") +
   theme_gray(base_size = 14) +
   xlab("Year") +
-  ylab("Mean predicted abundance") +
+  ylab("Predicted percent cover (%)") +
   labs(color = NULL) +
   theme(
     axis.text.x     = element_text(angle = 45, hjust = 1),
     legend.position = "bottom"
   ) +
-  ggtitle("GLLVM Predicted Abundance by Species Type, Subtreatment and Year")
+  ggtitle("GLLVM Predicted Cover by Species Type, Subtreatment and Year")
 
 p.gllvm.pred.type
 ggsave("Output/gllvm_predicted_type.png", p.gllvm.pred.type,
@@ -416,13 +416,13 @@ p.gllvm.pred.focus <- pred_df %>%
              labeller = labeller(Species = focus_species_labels)) +
   theme_gray(base_size = 14) +
   xlab("Year") +
-  ylab("Predicted abundance") +
+  ylab("Predicted percent cover (%)") +
   labs(color = NULL) +
   theme(
     axis.text.x     = element_text(angle = 45, hjust = 1),
     legend.position = "bottom"
   ) +
-  ggtitle("GLLVM Predicted Abundance — Target Species by Subtreatment and Year")
+  ggtitle("GLLVM Predicted Cover — Target Species by Subtreatment and Year")
 
 p.gllvm.pred.focus
 ggsave("Output/gllvm_predicted_focus.png", p.gllvm.pred.focus,

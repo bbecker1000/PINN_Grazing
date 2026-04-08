@@ -3,7 +3,12 @@
 # SOURCE AT START OF EVERY SESSION: source("Code/startup.R")
 # ============================================================
 
-# Set library path
+# ============================================================
+# Code/startup.R
+# SOURCE AT START OF EVERY SESSION: source("Code/startup.R")
+# ============================================================
+
+# Set persistent library path
 .libPaths(c("/home/jovyan/R/library", .libPaths()))
 
 # Load all packages
@@ -28,6 +33,7 @@ suppressPackageStartupMessages({
   library(MASS)
   library(patchwork)
   library(gllvm)
+  library(permute)
 })
 
 # Fix common masking conflicts
@@ -37,6 +43,8 @@ summarise <- dplyr::summarise
 rename    <- dplyr::rename
 ordiplot  <- gllvm::ordiplot
 
+cat("All packages loaded successfully\n")
+cat("Session started:", format(Sys.time(), "%Y-%m-%d %H:%M"), "\n")
 cat("All packages loaded successfully\n")
 cat("Session started:", format(Sys.time(), "%Y-%m-%d %H:%M"), "\n")
 
