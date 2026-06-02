@@ -62,13 +62,21 @@ covariate_labels <- c(
   "Year.f2025"                                      = "2025"
 )
 
+
+# We also seeded some native wildfowers:
+# poppies, ESCA; 
+# tarweed, DELO; 
+# owls clover, CAEX; 
+# and goldfields, LAGR
+
+
 all_species_labels <- c(
   "HIIN"            = "Summer Mustard",
   "CESO"            = "Yellow Star Thistle",
   "ESCA"            = "California Poppy",
-  "DELO"            = "Meadowfoam",
-  "CAEX"            = "California Oatgrass",
-  "LAGR"            = "Clarkia",
+  "DELO"            = "Tarweed",
+  "CAEX"            = "Owls Clover",
+  "LAGR"            = "Goldfields",
   "Native Forb"     = "Native Forb",
   "Native Grass"    = "Native Grass",
   "Nonnative Forb"  = "Non-native Forb",
@@ -81,9 +89,9 @@ focus_species_labels <- c(
   "HIIN" = "Summer Mustard",
   "CESO" = "Yellow Star Thistle",
   "ESCA" = "California Poppy",
-  "DELO" = "Meadowfoam",
-  "CAEX" = "California Oatgrass",
-  "LAGR" = "Clarkia"
+  "DELO" = "Tarweed",
+  "CAEX" = "Owls Clover",
+  "LAGR" = "Goldfields"
 )
 
 type_colors_gllvm <- c(
@@ -338,13 +346,13 @@ p.gllvm.pred.species <- pred_df %>%
   labs(color = NULL) +
   theme(
     axis.text.x     = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
+    legend.position = "right"
   ) +
   ggtitle("GLLVM Predicted Cover by Species, Subtreatment and Year")
 
 p.gllvm.pred.species
 ggsave("Output/gllvm_predicted_species.png", p.gllvm.pred.species,
-       width = 40, height = 30, units = "cm", dpi = 300)
+       width = 40, height = 20, units = "cm", dpi = 300)
 rm(p.gllvm.pred.species)
 gc()
 
@@ -380,13 +388,13 @@ p.gllvm.pred.type <- pred_df_type %>%
   labs(color = NULL) +
   theme(
     axis.text.x     = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
+    legend.position = "right"
   ) +
   ggtitle("GLLVM Predicted Cover by Species Type, Subtreatment and Year")
 
 p.gllvm.pred.type
 ggsave("Output/gllvm_predicted_type.png", p.gllvm.pred.type,
-       width = 35, height = 25, units = "cm", dpi = 300)
+       width = 35, height = 20, units = "cm", dpi = 300)
 rm(p.gllvm.pred.type, pred_df_type)
 gc()
 
@@ -420,12 +428,12 @@ p.gllvm.pred.focus <- pred_df %>%
   labs(color = NULL) +
   theme(
     axis.text.x     = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom"
+    legend.position = "right"
   ) +
   ggtitle("GLLVM Predicted Cover — Target Species by Subtreatment and Year")
 
 p.gllvm.pred.focus
 ggsave("Output/gllvm_predicted_focus.png", p.gllvm.pred.focus,
-       width = 35, height = 25, units = "cm", dpi = 300)
+       width = 35, height = 20, units = "cm", dpi = 300)
 rm(p.gllvm.pred.focus)
 gc()
