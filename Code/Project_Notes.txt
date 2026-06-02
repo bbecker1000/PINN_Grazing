@@ -381,3 +381,49 @@ Outline for analyses/results from 2025-08-21
 1. sent draft slide deck to team for review (DONE)
 2  need to add YST model and plot to graphs
 
+
+2026-06-02
+Comments from Devii
+
+Here are a few questions and comments:
+
+1. I’m not the best with interpreting figures. For the figures in slides 6, 7, and 8, are the points actual data 
+   and the shaded areas predicted actual percent cover, based on our sampling methods?  ADDED TO SLIDE
+
+2. I wonder if we might consider changing thatch height to thatch depth throughout the paper and figures
+   (e.g. slide 12 top left figure). 
+   I think that’s the measure where we used a dowel and poked into the thatch layer covering the ground. 
+   For some reason I can visualize it better when I think of it as depth.  DONE IN CODE
+
+3. Slide 12 – bare ground – am I reading it correctly that in 2024 and 2025 there was more bare ground in grazed plots 
+   and least in ungrazed? 
+   I think I might be reading the graph wrong.  
+   YOU ARE CORRECTLY READING THE PLOT. 
+   I ADDED THE RAW DATA PLOT ON SLIDE 11 (TOP RIGHT) AND IT ALSO SHOWS THE SAME PATTERN.
+
+4. Slide 13 – It’s labeled as mustard cover. I think maybe that’s the mustard canopy gap intercept measurement 
+   (and not percent cover like in slide 7 – they’re two different measures). So, maybe we should call this graph 
+   Mustard Canopy Gap or something like that .
+   DONE IN CODE
+   
+5. Also, you’ve got 2021 as the pre-treatment year for all of the graphs except mustard cover. 
+   For that one you show 2022 to the left of the dotted line.  Although we didn’t start collecting mustard canopy cover data until 2022, 
+   that wasn’t a pre-treatment year so I wonder if we should get rid of that dotted line between 2022 and 2023?
+   DONE - ADDED 2021 to all PLOTS FOR CONSISTENT LOOK.
+
+6. Regarding your question on slide 13 – why does mustard cover increase in 2023, but not mustard density – 
+   I’m not totally sure about that. One possible reason I can think of is that mustard density is measuring young 
+   plants that are often still in the rosette stage whereas mustard cover is the canopy gap measurement of mature plants. 
+   They are measured at different times of year with plants that are at different stages of maturity. So, I wonder if 
+   there is generally high density of you plants in all years, but only in some years did enough of those young plants 
+   grow to have such high cover at maturity?
+
+Comments from Leslie
+1. I think the slides look really good and I really like the color groupings. 
+
+2. I am now slightly confused on whether or not we are looking at 
+   "mustard cover" vs "mustard canopy gap" on slides 7 and 13.
+   SLIDE 7 IS FROM THE COMMUNITY DATA = MUSTARD COVER
+   SLIDE 13 IS FROM TARGET DATA = MUSTARD CANOPY GAP.
+
+

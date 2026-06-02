@@ -192,15 +192,17 @@ ggplot(TargetData_long,
 # ============================================================
 # Updated make_ce_plot — newdata passed via conditions instead
 make_ce_plot <- function(model, title, ylab,
-                         newdata      = NULL,
-                         color_values = subtreatment_colors,
-                         ylim_vals    = NULL) {
+                         color_values  = subtreatment_colors,
+                         ylim_vals     = NULL,
+                         show_vline    = TRUE,
+                         all_years     = c("2021", "2022", "2023", "2024", "2025")) {
   ce <- conditional_effects(
     model,
     effects    = "Year.f:Treatment",
-    re_formula = NA,      # marginalize over ALL random effects
-    robust     = TRUE     # use median instead of mean for robustness
+    re_formula = NA,
+    robust     = TRUE
   )
+  
   p <- plot(ce, plot = FALSE)[[1]] +
     theme_pinn +
     legend_bottom +
@@ -208,16 +210,23 @@ make_ce_plot <- function(model, title, ylab,
     xlab("Year") +
     scale_color_manual(values = color_values) +
     scale_fill_manual(values  = color_values) +
-    geom_vline(xintercept = 1.5,
-               linetype   = 4,
-               color      = "gray40") +
+    # Force x-axis to show all years even if model missing 2021
+    scale_x_discrete(limits = all_years,
+                     drop   = FALSE) +
     ggtitle(title)
+  
+  # Vline always at 1.5 (between 2021 and 2022) since x-axis is now fixed
+  if (show_vline) {
+    p <- p + geom_vline(xintercept = 1.5,
+                        linetype   = 4,
+                        color      = "gray40")
+  }
+  
   if (!is.null(ylim_vals)) p <- p + ylim(ylim_vals)
   p
 }
-
 # ============================================================
-# 1. MUSTARD COVER (HIIN) - zero_inflated_beta brms
+# 1. MUSTARD CANOPY GAP (HIIN) - zero_inflated_beta brms
 # ============================================================
 hist(TargetData$MustardCovr_pct)
 
@@ -265,9 +274,8 @@ plot(res)
 
 p.Mustard_predict <- make_ce_plot(
   Mustard.m1.brms,
-  title   = "Mustard Cover by Treatment and Year",
-  ylab    = "Mustard Cover (proportion)",
-  newdata = valid_newdata.Mustard
+  title = "Mustard Canopy Gap by Treatment and Year",
+  ylab  = "Mustard Canopy Gap (proportion)"
 )
 p.Mustard_predict
 ggsave("Output/MustardCover_predict.png", p.Mustard_predict,
@@ -315,8 +323,8 @@ summary(MustardDens.m1.brms)
 p.MustardDens_predict <- make_ce_plot(
   MustardDens.m1.brms,
   title   = "Mustard Density by Treatment and Year",
-  ylab    = "Mustard Density (plants/m²)",
-  newdata = valid_newdata.MustardDens
+  ylab    = "Mustard Density (plants/m²)"#,
+  #newdata = valid_newdata.MustardDens
 )
 p.MustardDens_predict
 ggsave("Output/MustardDens_predict.png", p.MustardDens_predict,
@@ -403,7 +411,7 @@ rm(YST.plot, YStarPresence.m1.brms)
 gc()
 
 # ============================================================
-# 4. THATCH HEIGHT (cm) - hurdle_gamma brms
+# 4. THATCH Depth  (cm) - hurdle_gamma brms
 # ============================================================
 hist(TargetData$AvThatch_cm)
 cat("Thatch zeros:", sum(TargetData$AvThatch_cm == 0, na.rm = TRUE), "\n")
@@ -432,8 +440,8 @@ summary(AvThatch_cm.m1.brms)
 
 p.AvThatch_predict <- make_ce_plot(
   AvThatch_cm.m1.brms,
-  title = "Thatch Height by Treatment and Year",
-  ylab  = "Thatch Height (cm)"
+  title = "Thatch Depth by Treatment and Year",
+  ylab  = "Thatch Depth (cm)"
 )
 p.AvThatch_predict
 ggsave("Output/AvThatch_predict.png", p.AvThatch_predict,
@@ -674,8 +682,8 @@ MustardDens.m1.brms  <- readRDS("Output/mustard_dens_model.rds")
 AvVegHeight.m1.brms  <- readRDS("Output/vegheight_model.rds")
 
 panel_thatch <- make_ce_plot(AvThatch_cm.m1.brms,
-                             title = "Thatch Height (cm)",
-                             ylab  = "Thatch Height (cm)")
+                             title = "Thatch Depth (cm)",
+                             ylab  = "Thatch Depth (cm)")
 
 panel_visobs <- make_ce_plot(VisObs_Av.m1.brms,
                              title = "Visual Obstruction (cm)",
@@ -694,14 +702,14 @@ panel_thatch_bio <- make_ce_plot(thatch.m1.brms,
                                  ylab  = "Thatch (lbs/ac)")
 
 panel_mustard <- make_ce_plot(Mustard.m1.brms,
-                              title   = "Mustard Cover (proportion)",
-                              ylab    = "Mustard Cover (proportion)",
-                              newdata = valid_newdata.Mustard)
+                              title   = "Mustard Canopy Gap",
+                              ylab    = "Mustard Canopy Gap")#,
+                              #newdata = valid_newdata.Mustard)
 
 panel_mustarddens <- make_ce_plot(MustardDens.m1.brms,
                                   title   = "Mustard Density (plants/m²)",
-                                  ylab    = "Mustard Density (plants/m²)",
-                                  newdata = valid_newdata.MustardDens)
+                                  ylab    = "Mustard Density (plants/m²)")#,
+                                  #newdata = valid_newdata.MustardDens)
 
 panel_vegheight <- make_ce_plot(AvVegHeight.m1.brms,
                                 title = "Vegetation Height (cm)",
