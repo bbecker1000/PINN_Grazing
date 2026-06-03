@@ -640,7 +640,7 @@ thatch.m1.brms <- brm(
   seed    = brms_seed
 )
 
-pp_check(thatch.m1.brms, ndraws = 100)
+pp_check(thatch.m1.brms, ndraws = 100) + ggtitle("Thatch")
 summary(thatch.m1.brms)
 
 p.thatch_predict <- make_ce_plot(
@@ -655,6 +655,36 @@ ggsave("Output/Thatch_biomass_predict.png", p.thatch_predict,
 saveRDS(thatch.m1.brms, "Output/thatch_biomass_model.rds")
 rm(thatch.m1.brms, p.thatch_predict)
 gc()
+
+
+##pp plots
+
+
+p.a <- pp_check(Mustard.m1.brms, ndraws = 100) + ggtitle("Mustard Canopy Gap")
+p.b <- pp_check(MustardDens.m1.brms, ndraws = 100) + ggtitle("Mustard Density")
+p.c <- pp_check(YStarPresence.m1.brms, ndraws = 100)+ ggtitle("YST")
+p.d <- pp_check(AvVegHeight.m1.brms, ndraws = 100)+ ggtitle("Veg Height")
+p.e <- pp_check(VisObs_Av.m1.brms, ndraws = 100) + ggtitle("Vis Obstruction")
+p.f <- pp_check(bareground.m1.brms, ndraws = 100) + ggtitle("Bare Ground")
+p.g <- pp_check(AllYield.m1.brms, ndraws = 100) + ggtitle("Yield")
+p.h <- pp_check(thatch.m1.brms, ndraws = 100) + ggtitle("Thatch")
+
+
+combined_plot_pp<-
+  (p.a     | p.b)      /
+  (p.c         | p.d)     /
+  (p.e         | p.f)    /
+  (p.g         | p.h)    +
+  plot_layout(guides = "collect") +
+  plot_annotation(
+    title    = "pp plots",
+    theme    = theme(
+      plot.title    = element_text(size = 18, face = "bold"),
+      plot.subtitle = element_text(size = 14)
+    )
+  ) &
+  theme_classic(base_size = 14) 
+
 
 # ============================================================
 # RELOAD SAVED MODELS
@@ -680,6 +710,7 @@ thatch.m1.brms       <- readRDS("Output/thatch_biomass_model.rds")
 Mustard.m1.brms      <- readRDS("Output/mustard_cover_model.rds")
 MustardDens.m1.brms  <- readRDS("Output/mustard_dens_model.rds")
 AvVegHeight.m1.brms  <- readRDS("Output/vegheight_model.rds")
+YStarPresence.m1.brms  <- readRDS("Output/ystar_presence_model.rds")
 
 panel_thatch <- make_ce_plot(AvThatch_cm.m1.brms,
                              title = "Thatch Depth (cm)",
@@ -714,6 +745,11 @@ panel_mustarddens <- make_ce_plot(MustardDens.m1.brms,
 panel_vegheight <- make_ce_plot(AvVegHeight.m1.brms,
                                 title = "Vegetation Height (cm)",
                                 ylab  = "Veg Height (cm)")
+
+YStarPresence <- make_ce_plot(YStarPresence.m1.brms,
+                              title = "YST Presence",
+                              ylab  = "YST Presence")
+
 
 combined_plot_A<-
   (panel_thatch     | panel_visobs)      /
